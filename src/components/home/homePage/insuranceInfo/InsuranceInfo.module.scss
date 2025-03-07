@@ -1,0 +1,17 @@
+.content{
+    
+  .items{
+    padding: 24px;
+    display: flex;
+
+    flex-direction: column;
+    .item{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .color{
+            color: #808080;
+        }
+    }
+  }
+}

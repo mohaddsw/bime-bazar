@@ -1,0 +1,20 @@
+.content{
+    padding: 24px 19px;
+    display: flex;
+    flex-direction: column;
+    row-gap:28px ;
+    .address{
+        display: flex;
+        flex-direction: column;
+        row-gap: 6px;
+    }
+    .action-div{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        .action-btn{
+width: 131px;
+        }
+    }
+}

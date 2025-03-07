@@ -1,0 +1,36 @@
+.textfield-class {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  row-gap: 4px;
+
+}
+.input-container {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+
+  &.error {
+    color: red;
+    .fieldset {
+      border-color: red;
+    }
+    .label {
+      color: red;
+    }
+  }
+
+}
+
+
+.input {
+  width: 100%;
+  border: 1px solid #B4B4B4;
+  background: none;
+  text-align: right;
+  padding: 13px;
+  outline: none;
+
+}
+
