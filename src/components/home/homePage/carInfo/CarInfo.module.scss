@@ -17,6 +17,11 @@
 width: 131px;
         }
     }
+    .form-content{
+        display: flex;
+        flex-direction: column;
+        row-gap:28px ;
+    }
 }
 .drawer{
     position: fixed !important;

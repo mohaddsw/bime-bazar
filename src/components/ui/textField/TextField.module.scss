@@ -11,16 +11,11 @@
   position: relative;
   align-items: center;
 
-  &.error {
-    color: red;
-    .fieldset {
-      border-color: red;
-    }
-    .label {
-      color: red;
-    }
-  }
+ 
 
+}
+.error-text{
+  color: red;
 }
 
 
