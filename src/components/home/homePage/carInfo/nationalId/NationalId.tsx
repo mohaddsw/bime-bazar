@@ -38,7 +38,7 @@ const NationalId:FC<Props> = ({ control, errors }) => {
         return (
           <TextField
             label="کد ملی"
-            type="tel"
+            type="number"
             value={value as number}
             onChange={onChange}
             {...props}

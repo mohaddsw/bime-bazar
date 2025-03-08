@@ -33,7 +33,7 @@ const Tell:FC<Props> = ({ control, errors }) => {
       return (
         <TextField
           label="شماره تلفن همراه "
-          type="tel"
+          type="number"
           value={value as number}
           onChange={onChange}
           {...props}
