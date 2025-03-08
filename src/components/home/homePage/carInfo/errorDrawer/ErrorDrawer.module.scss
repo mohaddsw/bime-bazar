@@ -1,0 +1,10 @@
+.content{
+    padding: 16px 12px;
+    .actions{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: 8px;
+        margin-top: 12px;
+    }
+}

@@ -10,6 +10,8 @@ import AddressDrawer from "./addressDrawer/AddressDrawer";
 import { Controller, useForm } from "react-hook-form";
 import NationalId from "./nationalId/NationalId";
 import Tell from "./tell/Tell";
+import ErrorDrawer from "./errorDrawer/ErrorDrawer";
+import { useRouter } from "next/router";
 type Address = {
   details: string;
   id: string;
@@ -18,22 +20,40 @@ type Address = {
 export type FormData = {
   nationalCode: number | string;
   tell: number | string;
-  address: string;
+  address: Address | object;
 };
 const CarInfo = () => {
   const { drawerClose, drawerOpen, isDrawerOpen } = useDrawer();
   const [address, setAddress] = useState<Address[] | []>([]);
   const [loading, setLoading] = useState(false);
-  const { handleSubmit, control, formState,setValue,watch } = useForm<FormData>({
-    defaultValues: {
-      nationalCode: "",
-      tell: "",
-      address: "",
-    },
-  });
+  const [status, setStatus] = useState("default");
+  const router=useRouter()
+  const { handleSubmit, control, formState, setValue, watch } =
+    useForm<FormData>({
+      defaultValues: {
+        nationalCode: "",
+        tell: "",
+        address: {},
+      },
+    });
   const onsubmit = (formData: FormData) => {
-    setLoading(true)
-    console.log(formData);
+    setLoading(true);
+
+    axios
+      .post("/order/completion/", {
+        nationalId: formData.nationalCode,
+        phoneNumber: formData.tell,
+        addressId: (formData.address as Address)?.id,
+      })
+      .then(() => {
+        router.push("/success")
+        setLoading(false);
+      })
+      .catch(() => {
+        drawerOpen("DRAWER");
+        setStatus("error");
+        setLoading(false);
+      });
   };
   useEffect(() => {
     axios.get("/my-addresses/").then((res) => setAddress(res?.data));
@@ -41,13 +61,13 @@ const CarInfo = () => {
   const handleSelectAndClose = (value: string) => {
     drawerClose();
     const addressValue = address.find((item) => item.id === value);
-    setValue("address",addressValue?.details ?? "")
+    setValue("address", addressValue ?? {});
   };
   const nationalCode = watch("nationalCode");
-const tell = watch("tell");
-const addressField = watch("address");
+  const tell = watch("tell");
+  const addressField = watch("address");
 
-const isAllFilled = nationalCode && tell && addressField;
+  const isAllFilled = nationalCode && tell && (addressField as Address)?.id;
   return (
     <div>
       <Header title="  مشخصات مالک خودرو" hasIcon={true} />
@@ -55,9 +75,12 @@ const isAllFilled = nationalCode && tell && addressField;
         <Typography variant="title">
           لطفا اطلاعات شخصی مالک خودرو را وارد کنید.
         </Typography>
-        <form onSubmit={handleSubmit(onsubmit)} className={styles["form-content"]}>
-       <NationalId control={control} errors={formState.errors}/>
-       <Tell control={control} errors={formState.errors}/>
+        <form
+          onSubmit={handleSubmit(onsubmit)}
+          className={styles["form-content"]}
+        >
+          <NationalId control={control} errors={formState.errors} />
+          <Tell control={control} errors={formState.errors} />
           <Controller
             control={control}
             rules={{
@@ -71,7 +94,7 @@ const isAllFilled = nationalCode && tell && addressField;
                     {" "}
                     آدرس جهت درج روی بیمه نامه
                   </Typography>
-                  {value === "" ? (
+                  {!Object.values(value).length ? (
                     <>
                       <Typography variant="description">
                         لطفا آدرسی را که میخواهید روی بیمه نامه درج شود را وارد
@@ -79,13 +102,15 @@ const isAllFilled = nationalCode && tell && addressField;
                       </Typography>
                       <Button
                         format="primary"
-                        onClick={() => drawerOpen("ADDRESS")}
+                        onClick={() => drawerOpen("DRAWER")}
                       >
                         انتخاب از آدرس های من
                       </Button>
                     </>
                   ) : (
-                    <Typography variant="description">{value}</Typography>
+                    <Typography variant="description">
+                      {(value as Address)?.details}
+                    </Typography>
                   )}
                 </div>
               );
@@ -93,21 +118,37 @@ const isAllFilled = nationalCode && tell && addressField;
           />
         </form>
         <div className={styles["action-div"]}>
-          <Button loading={loading} format="dark" disabled={!isAllFilled} className={styles["action-btn"]} type="submit" onClick={handleSubmit(onsubmit)}>
+          <Button
+            loading={loading}
+            format="dark"
+            disabled={!isAllFilled}
+            className={styles["action-btn"]}
+            type="submit"
+            onClick={handleSubmit(onsubmit)}
+          >
             تایید و ادامه
           </Button>
         </div>
       </div>
       <Drawer
         onClose={drawerClose}
-        open={isDrawerOpen("ADDRESS")}
+        open={isDrawerOpen("DRAWER")}
         maxWidth="360px"
         className={styles["drawer"]}
       >
-        <AddressDrawer
-          handleClose={(val) => handleSelectAndClose(val)}
-          address={address}
-        />
+        {status === "default" && (
+          <AddressDrawer
+            handleClose={(val) => handleSelectAndClose(val)}
+            address={address}
+          />
+        )}
+        {status === "error" && (
+          <ErrorDrawer
+            retry={handleSubmit(onsubmit)}
+            back={drawerClose}
+            loading={loading}
+          />
+        )}
       </Drawer>
     </div>
   );

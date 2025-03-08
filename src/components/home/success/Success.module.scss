@@ -1,0 +1,41 @@
+.content{
+   
+    max-width: 360px;
+    width: 360px;
+    height:797px ;
+    background-color: #fff;
+    position: relative;
+    .success-content{
+        padding: 24px;
+      text-align: center;
+      .success-text{
+        color:#34A862 ;
+      }
+
+    }
+    .items{
+        padding: 24px;
+        display: flex;
+    
+        flex-direction: column;
+        .item{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .color{
+                color: #808080;
+            }
+        }
+      }
+      .actions-sec{
+        margin-top: 320px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        .actions-btn{
+            width:140px ;
+        }
+
+      }
+ }
