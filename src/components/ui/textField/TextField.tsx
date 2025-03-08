@@ -1,4 +1,4 @@
-import {   TextFieldType } from '../Types2'
+import {   TextFieldType } from '../Type'
 import { forwardRef, InputHTMLAttributes } from 'react'
 import styles from './TextField.module.scss'
 import Typography from '../typography/Typography'
@@ -50,10 +50,8 @@ const TextField = forwardRef(
         {(error) && (
           <Typography
             component="span"
-            variant="big-title"
+            variant="description"
             className={
-              styles['helper-text'] +
-              ' ' +
               `${error ? styles['error-text'] : ''}`
             }
           >

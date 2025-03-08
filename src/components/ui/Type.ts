@@ -19,3 +19,5 @@ export type TypographyVariants =
   | 'h6'
   | 'li'
   | 'label'
+
+  export type TextFieldType = 'text' | 'password' | 'email' | 'number' | 'tel'
