@@ -7,12 +7,14 @@ import Drawer from "@/components/ui/drawer/Drawer";
 import { useEffect, useState } from "react";
 import axios from "@/services/axios";
 import AddressDrawer from "./addressDrawer/AddressDrawer";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import NationalId from "./nationalId/NationalId";
 import Tell from "./tell/Tell";
 import ErrorDrawer from "./errorDrawer/ErrorDrawer";
 import { useRouter } from "next/router";
-type Address = {
+import Address from "./address/Address";
+import DeletDrawer from "./deleteDrawer/DeleteDrawer";
+export type Address = {
   details: string;
   id: string;
   name: string;
@@ -27,7 +29,8 @@ const CarInfo = () => {
   const [address, setAddress] = useState<Address[] | []>([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("default");
-  const router=useRouter()
+  const [deletedVal, setDeletedVal] = useState<Address | object>({});
+  const router = useRouter();
   const { handleSubmit, control, formState, setValue, watch } =
     useForm<FormData>({
       defaultValues: {
@@ -46,7 +49,7 @@ const CarInfo = () => {
         addressId: (formData.address as Address)?.id,
       })
       .then(() => {
-        router.push("/success")
+        router.push("/success");
         setLoading(false);
       })
       .catch(() => {
@@ -58,11 +61,26 @@ const CarInfo = () => {
   useEffect(() => {
     axios.get("/my-addresses/").then((res) => setAddress(res?.data));
   }, []);
-  const handleSelectAndClose = (value: string) => {
-    drawerClose();
+  const handleSelect = (value: string) => {
+   
     const addressValue = address.find((item) => item.id === value);
     setValue("address", addressValue ?? {});
   };
+  const handleDeletedItem=(val:string)=>{
+    const addressValue = address.find((item) => item.id === val);
+    setDeletedVal(addressValue ?? {})
+  }
+  const handleDeletedAddress=()=>{
+    const newAddress: Address[]=[]
+    address.forEach((item)=>{
+    if(item.id!==(deletedVal as Address).id){
+      newAddress.push(item)
+    }
+    })
+    setAddress(newAddress)
+    setStatus("default")
+    drawerClose()
+  }
   const nationalCode = watch("nationalCode");
   const tell = watch("tell");
   const addressField = watch("address");
@@ -81,40 +99,9 @@ const CarInfo = () => {
         >
           <NationalId control={control} errors={formState.errors} />
           <Tell control={control} errors={formState.errors} />
-          <Controller
+          <Address
             control={control}
-            rules={{
-              required: "این فیلد ضروری میباشد.",
-            }}
-            name="address"
-            render={({ field: { value } }) => {
-              return (
-                <div className={styles["address"]}>
-                  <Typography variant="title">
-                    {" "}
-                    آدرس جهت درج روی بیمه نامه
-                  </Typography>
-                  {!Object.values(value).length ? (
-                    <>
-                      <Typography variant="description">
-                        لطفا آدرسی را که میخواهید روی بیمه نامه درج شود را وارد
-                        کنید.
-                      </Typography>
-                      <Button
-                        format="primary"
-                        onClick={() => drawerOpen("DRAWER")}
-                      >
-                        انتخاب از آدرس های من
-                      </Button>
-                    </>
-                  ) : (
-                    <Typography variant="description">
-                      {(value as Address)?.details}
-                    </Typography>
-                  )}
-                </div>
-              );
-            }}
+            handleOpenDrawer={() => drawerOpen("DRAWER")}
           />
         </form>
         <div className={styles["action-div"]}>
@@ -138,8 +125,16 @@ const CarInfo = () => {
       >
         {status === "default" && (
           <AddressDrawer
-            handleClose={(val) => handleSelectAndClose(val)}
+            handleClose={(val) =>{
+              handleSelect(val)
+              drawerClose()
+            } }
             address={address}
+            handleDelete={(val)=>{
+              setStatus("delete")
+              drawerOpen("DRAWER")
+              handleDeletedItem(val)
+            }}
           />
         )}
         {status === "error" && (
@@ -147,6 +142,22 @@ const CarInfo = () => {
             retry={handleSubmit(onsubmit)}
             back={drawerClose}
             loading={loading}
+          />
+        )}
+        {status === "delete" && (
+          <DeletDrawer
+            back={()=>{
+              drawerClose()
+              setStatus("default")
+            }}
+            handleClose={()=>{
+              drawerClose()
+              setStatus("default")
+              setDeletedVal({})
+            }}
+            item={deletedVal as Address}
+            handleSuccess={()=>handleDeletedAddress() }
+           
           />
         )}
       </Drawer>

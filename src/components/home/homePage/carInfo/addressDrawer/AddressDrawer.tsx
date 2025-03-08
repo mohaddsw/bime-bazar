@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FC, useState } from "react";
 import RadioButton from "@/components/ui/radioButton/RadioButton";
 import Button from "@/components/ui/button/Button";
+import redClose from "../../.././../../../public/images/Vector (1).png"
 
 type Address = {
   details: string;
@@ -14,10 +15,11 @@ type Address = {
 type Props = {
   handleClose: (value:string) => void;
   address: Address[];
+  handleDelete:(value:string)=>void
 };
 
 
-const AddressDrawer: FC<Props> = ({ handleClose, address }) => {
+const AddressDrawer: FC<Props> = ({ handleClose, address ,handleDelete}) => {
     const [value,setValue]=useState("")
   
   return (
@@ -43,6 +45,7 @@ const AddressDrawer: FC<Props> = ({ handleClose, address }) => {
                   <RadioButton value={item.id} onChange={e =>setValue(e.target.value)}  checked={value === item.id} />
                   <Typography variant="title">{item.name}</Typography>
                 </div>
+                <Image alt="delete" src={redClose} onClick={()=>handleDelete(item.id)}/>
               </div>
               <Typography variant="description" className={styles["description"]}>{item.details}</Typography>
             </div>
