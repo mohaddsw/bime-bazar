@@ -1,9 +1,9 @@
-import HomePage from "@/components/home/homePage/HomePage";
 import Head from "next/head";
+import Success from "@/components/home/success/Success";
 
 
 
-export default function Home() {
+export default function SuccessPage() {
   return (
     <>
       <Head>
@@ -12,7 +12,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       
-      <HomePage/>
+      <Success/>
   
     </>
   );
