@@ -1,8 +1,30 @@
 .content{
     .header{
-
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 12px;
+        border-bottom: 1px solid #E0E0E0;
+        .close{
+            cursor: pointer;
+        }
     }
     .main{
+        padding: 16px 12px;
+        .address-item{
+            margin-bottom: 16px;
+            .item-flex{
+                .item-radio{
+                    display: flex;
+                    align-items: center;
+                    column-gap:6px ;
+                }
+            }
+            .description{
+                color:#757575 ;
+            }
+        }
         
+
     }
 }
